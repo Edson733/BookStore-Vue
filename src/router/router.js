@@ -3,20 +3,15 @@ import Vue from "vue";
 
 Vue.use(VueRouter);
 const routes = [
-<<<<<<< HEAD
     {
         path: "/",
         component: () => import("../views/list_books.vue"),
-    }
+    },
+    {
+        path: '/modal',
+        name: 'modal',
+        component: () => import('../components/Modal.vue')
+    },
 ];
-const router = new VueRouter({ routes });
+const router = new VueRouter({ mode: 'history', routes });
 export default router;
-=======
-  {
-    path: "/",
-    component: () => import("../views/list_books.vue"),
-  },
-];
-const router = new VueRouter({ routes });
-export default router;
->>>>>>> e3977c16a31ca69ccceed8aa2e936d83de739a61
