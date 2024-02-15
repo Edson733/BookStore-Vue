@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-button v-b-modal.insertar>Insertar</b-button>
-        <b-modal id="insertar" @show="resetModal" @hidden="resetModal" @ok="handleOk" scrollable title="Agregar un nuevo libro" cancel-variant="outline-danger" ok-variant="outline-success" hide-backdrop content-class="shadow">
+        <b-modal id="insertar" @show="resetModal" @hidden="resetModal" @ok="handleOk" scrollable title="Agregar un nuevo libro" cancel-variant="outline-danger" ok-variant="outline-success">
             <b-form class="my-4" @submit.prevent="validarForm" @submit="handleSubmit">
                 <p v-if="errors.length">
                     <b>{{ errors.length > 1 ? "Por favor corrige los siguientes errores: " : "Por favor corrige el siguiente error: " }}</b>
@@ -23,7 +23,7 @@
                     </b-form-select>
                 </b-form-group>
                 <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion" :state="publicacion ? null : false">
-                    <b-form-input id="publicacion" v-model="form.publicacion" type="text" name="publicacion" required></b-form-input>
+                    <b-form-input id="publicacion" v-model="form.publicacion" type="number" name="publicacion" required></b-form-input>
                 </b-form-group>
             </b-form>
         </b-modal>
@@ -66,8 +66,8 @@
 
                 if (!this.form.publicacion) {
                     this.errors.push("El año de publicacion es obligatorio.");
-                } else if (isNaN(this.publicacion)) {
-                    this.errors.push("El año de publicacion debe ser un numero.");
+                } else if (this.form.publicacion < 1000 || this.form.publicacion > new Date().getFullYear()) {
+                    this.errors.push("Coloca un año de publicacion valido.");
                 }
 
                 if (!this.errors.length > 0) {

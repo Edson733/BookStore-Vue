@@ -1,33 +1,18 @@
 <template>
   <b-container class="mt-5">
-      <Modal/>
-  <div class="overflow-auto">
-
-    <b-table
-      id="my-table"
-      :items="items"
-      :per-page="perPage"
-      :current-page="currentPage"
-      :fields="fields"
-      :filter="filter"
-      small
-    > </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="my-table"
-    ></b-pagination>
-    <p class="mt-3">Current Page: {{ currentPage }}</p>
-
-  </div>
+    <Modal/>
+    <div class="overflow-auto">
+      <Card/>
+    </div>
 </b-container>
 
 </template>
 
 <script>
-import service from "../services/services"
-import Modal from "../components/Modal.vue"
+import service from "../services/services";
+import Modal from "../components/Modal.vue";
+import Card from "../components/Card.vue";
+
   export default {
     data() {
       return {
@@ -46,7 +31,8 @@ import Modal from "../components/Modal.vue"
       }
     },
     components:{
-      Modal
+      Modal,
+      Card
     },
     computed: {
       rows() {
