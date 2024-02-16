@@ -19,8 +19,10 @@
 </template>
 
 <script>
-import service from "../services/services"
-import Modal from "../components/Modal.vue"
+import service from "../services/services";
+import Modal from "../components/Modal.vue";
+import Card from "../components/Card.vue";
+
   export default {
     data() {
       return {
@@ -29,7 +31,8 @@ import Modal from "../components/Modal.vue"
       }
     },
     components:{
-      Modal
+      Modal,
+      Card
     },
     computed: {
       rows() {

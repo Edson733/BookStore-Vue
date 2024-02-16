@@ -8,9 +8,9 @@ const routes = [
         component: () => import("../views/list_books.vue"),
     },
     {
-        path: '/modal',
-        name: 'modal',
-        component: () => import('../components/Modal.vue')
+        path: '/card',
+        name: 'card',
+        component: () => import('../components/Card.vue')
     },
 ];
 const router = new VueRouter({ mode: 'history', routes });
