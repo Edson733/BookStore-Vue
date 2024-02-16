@@ -9,50 +9,74 @@
                         <li v-for="error in errors" :key="error.index">{{ error }}</li>
                     </ul>
                 </p>
-                <b-form-group id="nombre-group" label="Nombre" label-for="nombre" :state="nombre ? null : false">
-                    <b-form-input id="nombre" v-model="form.nombre" type="text" name="nombre" required></b-form-input>
+                <b-form-group id="nombre-group" label="Nombre" label-for="nombre">
+                    <b-form-input id="nombre" v-model="form.name" type="text" name="nombre" required></b-form-input>
                 </b-form-group>
-                <b-form-group id="autor-group" class="mt-3" label="Autor" label-for="autor" :state="autor ? null : false">
+                <b-form-group id="autor-group" class="mt-3" label="Autor" label-for="autor">
                     <b-form-input id="autor" v-model="form.autor" type="text" name="autor" required></b-form-input>
                 </b-form-group>
-                <b-form-group id="genero-group" class="mt-3" label="Genero" label-for="genero" :state="genero ? null : false">
-                    <b-form-select id="genero" v-model="form.genero.id" :options="options">
+                <b-form-group id="category-group" class="mt-3" label="Genero" label-for="category">
+                    <b-form-select id="category" v-model="form.category.id" :options="options" value-field="id" text-field="name">
                         <template>
-                            <option :value="null" disabled>Selecciona alguno de los siguientes generos</option>
+                            <option :value="null" disabled>Selecciona uno de los siguientes generos</option>
                         </template>
                     </b-form-select>
                 </b-form-group>
-                <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion" :state="publicacion ? null : false">
-                    <b-form-input id="publicacion" v-model="form.publicacion" type="number" name="publicacion" required></b-form-input>
+                <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion">
+                    <b-form-input id="publicacion" v-model="form.año" type="number" name="publicacion" required></b-form-input>
                 </b-form-group>
             </b-form>
+            <ModalSpinner :isLoading="isLoading" />
         </b-modal>
     </div>
 </template>
 
 <script>
     import Vue from "vue";
+    import service from "../services/services";
+    import ModalSpinner from "@/components/ModalSpinner.vue";
 
-    export default Vue.extend( {
+    export default Vue.extend({
+        components: {
+            ModalSpinner,
+        },
         data() {
             return {
                 form: {
-                    nombre: null,
+                    name: null,
                     autor: null,
-                    genero: {
+                    category: {
                         id: null
                     },
-                    publicacion: null,
+                    año: null,
                 },
                 options: [],
                 errors: [],
+                isLoading: false,
             };
         },
+        mounted() {
+            this.getCategories();
+        },
         methods: {
+            async getCategories() {
+                try {
+                    const data = await service.getCategories();
+                    this.options = data.map((category) => {
+                        return {
+                            value: category.id,
+                            text: category.name
+                        }
+                    });
+                    console.log(this.options);
+                } catch (error) {
+                    console.error(error);
+                }
+            },
             async validarForm(e) {
                 this.errors = [];
 
-                if (!this.form.nombre) {
+                if (!this.form.name) {
                     this.errors.push("Nombre del libro obligatorio.");
                 }
 
@@ -60,13 +84,13 @@
                     this.errors.push("Nombre del autor obligatorio.");
                 }
 
-                if (!this.form.genero.id) {
-                    this.errors.push("Genero del libro es obligatorio.");
-                }
+                // if (!this.form.category.id) {
+                //     this.errors.push("Genero del libro es obligatorio.");
+                // }
 
-                if (!this.form.publicacion) {
+                if (!this.form.año) {
                     this.errors.push("El año de publicacion es obligatorio.");
-                } else if (this.form.publicacion < 1000 || this.form.publicacion > new Date().getFullYear()) {
+                } else if (this.form.año < 1000 || this.form.año > new Date().getFullYear()) {
                     this.errors.push("Coloca un año de publicacion valido.");
                 }
 
@@ -78,12 +102,12 @@
                 e.preventDefault();
             },
             resetModal() {
-                this.form.nombre = null
+                this.form.name = null
                 this.form.autor = null
-                this.form.genero = {
+                this.form.category = {
                     id: null
                 }
-                this.form.publicacion = null
+                this.form.año = null
                 this.errors = []
             },
             handleOk(bvModalEvent) {
@@ -92,13 +116,19 @@
             },
             async handleSubmit() {
                 this.validarForm()
+                this.isLoading = true;
                 try {
-                    this.$bvModal.hide('insertar')
+                    const response = await service.postBook(this.form);
+                    console.log("Respuesta del servidor:", response);
+                    this.$bvModal.hide('insertar');
+                    this.$emit('postBook', response);
                     this.$v?.$reset();
                 } catch (e) {
                     console.log(e);
+                }finally {
+                    this.isLoading = false
                 }
-            },
+            }
         }
     });
 </script>
