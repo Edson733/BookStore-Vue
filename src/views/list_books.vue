@@ -5,8 +5,10 @@
     <div v-for="book in books" :key="book.key" class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
         <div class="card rounded shadow">
           <div class="card-body">
-            <h5 class="card-title">{{ book.name }}</h5>
+            <h5 class="card-title">Libro: {{ book.name }}</h5>
             <p class="card-text">Autor: {{ book.autor }}</p>
+            <p class="card-text">Genero: {{ book.category.name }}</p>
+            <p class="card-text">Año de publicacion: {{ book.año }}</p>
             <a href="#" class="btn btn-primary">Editar</a>
           </div>
 
