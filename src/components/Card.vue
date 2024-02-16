@@ -1,14 +1,19 @@
 <template>
-    <div class="container-fluid">
+    <div class="container-fluid text-center">
         <b-row cols="4">
             <b-col>
-                <b-card img-src="https://picsum.photos/600/300/?image=25" img-alt="Image" img-top tag="article" style="max-width: 20rem" class="mb-2" >
+                <b-card title="Nombre Libro" img-src="https://www.enago.com/academy/wp-content/uploads/2021/12/BookChapter-750x340.jpg" img-alt="Image" img-top tag="article" style="max-width: 20rem, background-color: #fcfcfc" class="mb-2" >
                     <b-card-text>
-                        <h3>
-                            <b>Nombre Libro</b>
-                        </h3>
+                        <b>Autor:</b> Autor
+                        <br />
+                        <b>Genero:</b> Genero
+                        <br />
+                        <b>Año de publicación:</b> Año
                     </b-card-text>
-                    <b-card-text></b-card-text>
+                    <div class="text-center">
+                        <b-button class="m-1" variant="outline-primary"><b-icon icon="pen-fill"></b-icon></b-button>
+                        <b-button class="m-1" variant="outline-danger"><b-icon icon="trash-fill"></b-icon></b-button>
+                    </div>
                 </b-card>
             </b-col>
         </b-row>
