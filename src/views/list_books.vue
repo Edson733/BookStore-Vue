@@ -1,24 +1,17 @@
 <template>
   <b-container class="mt-5">
       <Modal/>
-  <div class="overflow-auto">
+  <div class="overflow-auto mt-5">
+    <div v-for="book in books" :key="book.key" class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+        <div class="card rounded shadow">
+          <div class="card-body">
+            <h5 class="card-title">{{ book.name }}</h5>
+            <p class="card-text">Autor: {{ book.autor }}</p>
+            <a href="#" class="btn btn-primary">Editar</a>
+          </div>
 
-    <b-table
-      id="my-table"
-      :items="items"
-      :per-page="perPage"
-      :current-page="currentPage"
-      :fields="fields"
-      :filter="filter"
-      small
-    > </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="my-table"
-    ></b-pagination>
-    <p class="mt-3">Current Page: {{ currentPage }}</p>
+        </div>
+      </div>
 
   </div>
 </b-container>
@@ -31,18 +24,8 @@ import Modal from "../components/Modal.vue"
   export default {
     data() {
       return {
-        sortBy: "name",
-
-        perPage: 3,
-        currentPage: 1,
+        books:[],
         items: [],
-        fields: [
-        { key: "name", label: "Nombre", sortable: false },
-        { key: "autor", label: "Autor", sortable: false },
-        { key: "año", label: "Año de publicacion", sortable: false },
-        { key: "category.name", label: "Genero", sortable: false },
-      ],
-        
       }
     },
     components:{
@@ -59,10 +42,8 @@ import Modal from "../components/Modal.vue"
     methods: {
     async getBook() {
       try {
-        const data = await service.getBooks(this.currentPage,
-          this.perPage,this.sortBy);
-        this.items = data.content;
-        console.log(data);
+        const data = await service.getBooks();
+        this.books = [...data];
       } catch (error) {
         console.error(error);
       }
@@ -71,3 +52,15 @@ import Modal from "../components/Modal.vue"
   },
   }
 </script>
+<style>
+.card {
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+</style>
