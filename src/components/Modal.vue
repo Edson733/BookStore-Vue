@@ -16,10 +16,8 @@
                     <b-form-input id="autor" v-model="form.autor" type="text" name="autor" required></b-form-input>
                 </b-form-group>
                 <b-form-group id="category-group" class="mt-3" label="Genero" label-for="category">
-                    <b-form-select id="category" v-model="form.category.id" :options="options" value-field="id" text-field="name">
-                        <template>
-                            <option :value="null" disabled>Selecciona uno de los siguientes generos</option>
-                        </template>
+                    <b-form-select id="category" v-model="form.category.id" :options="option">
+                            <option v-for="item in options"  key="item.id">{{ item.name }}</option>
                     </b-form-select>
                 </b-form-group>
                 <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion">
@@ -62,12 +60,7 @@
             async getCategories() {
                 try {
                     const data = await service.getCategories();
-                    this.options = data.map((category) => {
-                        return {
-                            value: category.id,
-                            text: category.name
-                        }
-                    });
+                    this.options = [...data]
                     console.log(this.options);
                 } catch (error) {
                     console.error(error);
