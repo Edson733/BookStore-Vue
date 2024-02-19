@@ -77,9 +77,9 @@
                     this.errors.push("Nombre del autor obligatorio.");
                 }
 
-                // if (!this.form.category.id) {
-                //     this.errors.push("Genero del libro es obligatorio.");
-                // }
+                if (!this.form.category.id) {
+                     this.errors.push("Genero del libro es obligatorio.");
+                }
 
                 if (!this.form.año) {
                     this.errors.push("El año de publicacion es obligatorio.");
