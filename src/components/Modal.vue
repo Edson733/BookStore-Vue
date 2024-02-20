@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-button v-b-modal.insertar>Insertar</b-button>
-        <b-modal id="insertar" @show="resetModal" @hidden="resetModal" @ok="handleOk" scrollable title="Agregar un nuevo libro" cancel-variant="outline-danger" ok-variant="outline-success">
+        <b-modal id="insertar" @show="resetModal" @hidden="resetModal" @ok="handleOk" @cancel="resetModal" hide-header-close title="Agregar un nuevo libro" cancel-title="Cancelar" cancel-variant="outline-danger" ok-title="Añadir" ok-variant="outline-success">
             <b-form class="my-4" @submit.prevent="validarForm" @submit="handleSubmit">
                 <p v-if="errors.length">
                     <b>{{ errors.length > 1 ? "Por favor corrige los siguientes errores: " : "Por favor corrige el siguiente error: " }}</b>
@@ -16,9 +16,7 @@
                     <b-form-input id="autor" v-model="form.autor" type="text" name="autor" required></b-form-input>
                 </b-form-group>
                 <b-form-group id="category-group" class="mt-3" label="Genero" label-for="category">
-                    <b-form-select id="category" v-model="form.category.id" :options="option">
-                            <option v-for="item in options"  key="item.id">{{ item.name }}</option>
-                    </b-form-select>
+                    <b-form-select id="category" v-model="form.category.id" :options="categories" value-field="name" text-field="name"/>
                 </b-form-group>
                 <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion">
                     <b-form-input id="publicacion" v-model="form.año" type="number" name="publicacion" required></b-form-input>
@@ -31,12 +29,12 @@
 
 <script>
     import Vue from "vue";
-    import service from "../services/services";
-    import ModalSpinner from "@/components/ModalSpinner.vue";
+    import bookService from "../services/Book";
+    import categoryService from "../services/Category";
 
     export default Vue.extend({
         components: {
-            ModalSpinner,
+            ModalSpinner: () => import("@/components/ModalSpinner.vue"),
         },
         data() {
             return {
@@ -44,11 +42,11 @@
                     name: null,
                     autor: null,
                     category: {
-                        id: null
+                        id: null,
                     },
                     año: null,
                 },
-                options: [],
+                categories: [],
                 errors: [],
                 isLoading: false,
             };
@@ -59,9 +57,9 @@
         methods: {
             async getCategories() {
                 try {
-                    const data = await service.getCategories();
-                    this.options = [...data]
-                    console.log(this.options);
+                    const data = await categoryService.getCategories();
+                    this.categories = [...data]
+                    console.log(this.categories);
                 } catch (error) {
                     console.error(error);
                 }
@@ -111,18 +109,20 @@
                 this.validarForm()
                 this.isLoading = true;
                 try {
-                    const response = await service.postBook(this.form);
+                    const response = await bookService.saveBook(this.form);
+                    if (!response.error) {
+                        this.isLoading = false;
+                        this.resetModal();
+                        this.$emit('BookSaved', response);
+                        this.$bvModal.hide('insertar');
+                    }
                     console.log("Respuesta del servidor:", response);
-                    this.$bvModal.hide('insertar');
-                    this.$emit('postBook', response);
-                    this.$v?.$reset();
-                } catch (e) {
-                    console.log(e);
-                }finally {
-                    this.isLoading = false
+                } catch (error) {
+                    console.log(error);
+                    this.isLoading = false;
                 }
-            }
-        }
+            },
+        },
     });
 </script>
 
