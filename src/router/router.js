@@ -5,7 +5,7 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: "/",
-        component: () => import("../views/list_books.vue"),
+        component: () => import("../views/LandPage.vue"),
     },
 ];
 const router = new VueRouter({ mode: 'history', routes });
