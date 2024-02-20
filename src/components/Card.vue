@@ -4,39 +4,39 @@
             <h4>Filtro de busqueda</h4>
             <b-col cols="5" class="mb-3" v-if="filter === 'nombre'">
                 <b-form-group label="Buscar libro:" label-for="searchLibro">
-                    <b-form-input v-model="nombreFilter" placeholder="Nombre del Libro" type="text" id="searchLibro" />
+                    <b-form-input v-model="nombreFilter" placeholder="Nombre del Libro" type="text" id="searchLibro" @input="getBooksByName()"/>
                 </b-form-group>
             </b-col>
             <b-col cols="5" class="mb-3" v-else-if="filter === 'autor'">
                 <b-form-group label="Buscar autor:" label-for="searchAutor">
-                    <b-form-input v-model="autorFilter" placeholder="Autor del Libro" type="text" id="searchAutor" />
+                    <b-form-input v-model="autorFilter" placeholder="Autor del Libro" type="text" id="searchAutor" @input="getBooksByAutor()"/>
                 </b-form-group>
             </b-col>
             <b-col cols="5" class="mb-3" v-else-if="filter === 'category'">
                 <b-form-group label="Buscar genero:" label-for="searchCategory">
-                    <b-form-select id="searchCategory" v-model="selectedCategory" :options="categories" value-field="name" text-field="name"/>
+                    <b-form-select id="searchCategory" v-model="selectedCategory" :options="categories" value-field="name" text-field="name" @change="getBooksByCategory()"/>
                 </b-form-group>
             </b-col>
             <b-row v-else-if="filter === 'dateRange'">
                 <b-col cols="4">
                 <b-form-group label="Fecha inicial:" label-for="fechaInicial">
-                    <b-form-input v-model="fechaInicio" placeholder="Año de publicacion" type="number" id="fechaInicial" />
+                    <b-form-input v-model="fechaInicio" placeholder="Año de publicacion" type="number" id="fechaInicial"/>
                 </b-form-group>
                 </b-col>
                 <b-col cols="4">
                 <b-form-group label="Fecha final:" label-for="fechaFinal">
-                    <b-form-input v-model="fechaFin" placeholder="Año de publicacion" type="number" id="fechaFinal" />
+                    <b-form-input v-model="fechaFin" placeholder="Año de publicacion" type="number" id="fechaFinal"/>
                 </b-form-group>
                 </b-col>
                 <b-col cols="4">
                 <b-form-group label="Buscar entre años:" label-for="btnFilter">
-                    <b-button variant="outline-primary">Buscar</b-button>
+                    <b-button variant="outline-primary" @click="getBooksByDateRange()">Buscar</b-button>
                 </b-form-group>
                 </b-col>
             </b-row>
             <b-col cols="5" v-else>
                 <b-form-group label="Orden por año de publicacion:">
-                    <b-button variant="outline-primary">Ordenar Descendentemente</b-button>
+                    <b-button variant="outline-primary" @click="getBooksByDateDesc()">Ordenar Descendentemente</b-button>
                 </b-form-group>
             </b-col>
             <b-col cols="5">
@@ -116,6 +116,50 @@
                     const data = await bookService.getAllBooks();
                     this.books = [...data];
                     this.isLoading = false;
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            async getBooksByName() {
+                try {
+                    const data = await bookService.getBookByName(this.nombreFilter);
+                    this.books = [...data];
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            async getBooksByAutor() {
+                try {
+                    const data = await bookService.getBookByAutor(this.autorFilter);
+                    this.books = [...data];
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            async getBooksByCategory() {
+                try {
+                    const data = await bookService.getBookByCategory(this.selectedCategory);
+                    this.books = [...data];
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            async getBooksByDateRange() {
+                if (this.fechaInicio !== null && this.fechaFin !== null) {
+                    try {
+                        const data = await bookService.getBookByDateBetween(this.fechaInicio, this.fechaFin);
+                        this.books = [...data];
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }else {
+                    console.log("Los años ingresados nos son validos");
+                }
+            },
+            async getBooksByDateDesc() {
+                try {
+                    const data = await bookService.getBookByDateDesc();
+                    this.books = [...data];
                 } catch (error) {
                     console.log(error);
                 }
