@@ -45,11 +45,11 @@
                 </b-form-group>
             </b-col>
         </b-row>
-        <div class="container-fluid text-center">
+        <div class="container-fluid text-center mt-3">
             <ModalSpinner :isLoading="isLoading"/>
             <b-row cols="4" v-if="!isLoading">
-                <b-col v-for="book in books" :key="book.key" class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
-                    <b-card :title="book.name" img-src="https://www.enago.com/academy/wp-content/uploads/2021/12/BookChapter-750x340.jpg" img-alt="Image" img-top tag="article" style="max-width: 20rem" class="card rounded shadow mb-2" >
+                <b-col v-for="(book, idx) in books" :key="idx" class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+                    <b-card :title="book.name" img-src="https://www.enago.com/academy/wp-content/uploads/2021/12/BookChapter-750x340.jpg" img-alt="Image" img-top tag="article" style="max-width: 15rem" class="card rounded shadow mb-2">
                         <b-card-text>
                             <b>Autor:</b> {{ book.autor }}
                             <br/>
@@ -57,10 +57,16 @@
                             <br/>
                             <b>Año de publicación:</b> {{ book.año }}
                         </b-card-text>
-                        <div class="text-center">
-                            <b-button class="m-1" variant="outline-primary" @click="update(book)"><b-icon icon="pen-fill"></b-icon></b-button>
-                            <b-button class="m-1" variant="outline-danger" @click="deleteOne(book.id)"><b-icon icon="trash-fill"></b-icon></b-button>
-                        </div>
+                        <b-row class="text-center">
+                            <hr>
+                            <b-col>
+                                <b-button class="m-1" variant="outline-primary" @click="openEditModal(book)"><b-icon icon="pen-fill"></b-icon></b-button>
+                                <EditModal :book="selectedBook"/>
+                            </b-col>
+                            <b-col>
+                                <b-button class="m-1" variant="outline-danger" @click="deleteBook(idx)"><b-icon icon="trash-fill"></b-icon></b-button>
+                            </b-col>
+                        </b-row>
                     </b-card>
                 </b-col>
             </b-row>
@@ -71,12 +77,13 @@
 <script>
     import Vue from "vue";
     import bookService from "../services/Book";
-    import categoryService from "../services/Category";
+    import categoryService from "../services/Category"; 
 
     export default Vue.extend({
         data() {
             return {
                 books: [],
+                selectedBook: null,
                 filter: "nombre",
                 options: [
                     { value: "nombre", text: "Nombre del libro" },
@@ -95,18 +102,25 @@
             };
         },
         components: {
-            ModalSpinner: () => import("@/components/ModalSpinner.vue")
+            ModalSpinner: () => import("@/components/ModalSpinner.vue"),
+            EditModal: () => import("@/components/EditModal.vue"),
         },
         mounted() {
             this.getAllBooks();
             this.getCategories();
         },
         methods: {
+            openEditModal(book) {
+                this.selectedBook = book;
+                this.$nextTick(() => {
+                    this.$bvModal.show("EditModal");
+                });
+            },
             async getCategories() {
                 try {
                     const data = await categoryService.getCategories();
-                    this.categories = [...data]
-                    console.log(this.categories);
+                    this.categories = [...data];
+                    this.isLoading = false;
                 } catch (error) {
                     console.error(error);
                 }
@@ -124,6 +138,7 @@
                 try {
                     const data = await bookService.getBookByName(this.nombreFilter);
                     this.books = [...data];
+                    this.isLoading = false;
                 } catch (error) {
                     console.log(error);
                 }
@@ -132,6 +147,7 @@
                 try {
                     const data = await bookService.getBookByAutor(this.autorFilter);
                     this.books = [...data];
+                    this.isLoading = false;
                 } catch (error) {
                     console.log(error);
                 }
@@ -140,6 +156,7 @@
                 try {
                     const data = await bookService.getBookByCategory(this.selectedCategory);
                     this.books = [...data];
+                    this.isLoading = false;
                 } catch (error) {
                     console.log(error);
                 }
@@ -149,6 +166,7 @@
                     try {
                         const data = await bookService.getBookByDateBetween(this.fechaInicio, this.fechaFin);
                         this.books = [...data];
+                        this.isLoading = false;
                     } catch (error) {
                         console.log(error);
                     }
@@ -160,6 +178,18 @@
                 try {
                     const data = await bookService.getBookByDateDesc();
                     this.books = [...data];
+                    this.isLoading = false;
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            async deleteBook(idx) {
+                try {
+                    const book = this.books[idx];
+                    const response = bookService.deleteBook(book.id);
+                    //this.books.splice(idx, 1);
+                    console.log(response);
+                    //window.location.reload();
                 } catch (error) {
                     console.log(error);
                 }

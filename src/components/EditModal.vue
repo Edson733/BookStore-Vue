@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="Modal" @show="resetModal" @hidden="resetModal" @ok="handleOk" @cancel="resetModal" hide-header-close title="Agregar un nuevo libro" cancel-title="Cancelar" cancel-variant="outline-danger" ok-title="Añadir" ok-variant="outline-success">
+        <b-modal id="EditModal" @hidden="closeModal" @ok="handleOk" @cancel="closeModal" hide-header-close title="Editar libro" cancel-title="Cancelar" cancel-variant="outline-danger" ok-title="Editar" ok-variant="outline-success">
             <b-form class="my-4" @submit.prevent="validarForm" @submit="handleSubmit">
                 <p v-if="errors.length">
                     <b>{{ errors.length > 1 ? "Por favor corrige los siguientes errores: " : "Por favor corrige el siguiente error: " }}</b>
@@ -9,16 +9,16 @@
                     </ul>
                 </p>
                 <b-form-group id="nombre-group" label="Nombre" label-for="nombre">
-                    <b-form-input id="nombre" v-model="form.name" type="text" name="nombre" required></b-form-input>
+                    <b-form-input id="nombre" v-model="book.name" type="text" name="nombre" required></b-form-input>
                 </b-form-group>
                 <b-form-group id="autor-group" class="mt-3" label="Autor" label-for="autor">
-                    <b-form-input id="autor" v-model="form.autor" type="text" name="autor" required></b-form-input>
+                    <b-form-input id="autor" v-model="book.autor" type="text" name="autor" required></b-form-input>
                 </b-form-group>
                 <b-form-group id="category-group" class="mt-3" label="Genero" label-for="category">
-                    <b-form-select id="category" v-model="form.category.id" :options="categories" value-field="id" text-field="name"/>
+                    <b-form-select id="category" v-model="book.category.id" :options="categories" value-field="id" text-field="name"/>
                 </b-form-group>
                 <b-form-group id="publicacion-group" class="mt-3" label="Año de Publicacion" label-for="publicacion">
-                    <b-form-input id="publicacion" v-model="form.año" type="number" name="publicacion" required></b-form-input>
+                    <b-form-input id="publicacion" v-model="book.año" type="number" name="publicacion" required></b-form-input>
                 </b-form-group>
             </b-form>
             <ModalSpinner :isLoading="isLoading" />
@@ -35,16 +35,11 @@
         components: {
             ModalSpinner: () => import("@/components/ModalSpinner.vue"),
         },
+        props: {
+            book: Object,
+        },
         data() {
             return {
-                form: {
-                    name: null,
-                    autor: null,
-                    category: {
-                        id: null,
-                    },
-                    año: null,
-                },
                 categories: [],
                 errors: [],
                 isLoading: false,
@@ -65,21 +60,21 @@
             async validarForm(e) {
                 this.errors = [];
 
-                if (!this.form.name) {
+                if (!this.book.name) {
                     this.errors.push("Nombre del libro obligatorio.");
                 }
 
-                if (!this.form.autor) {
+                if (!this.book.autor) {
                     this.errors.push("Nombre del autor obligatorio.");
                 }
 
-                if (!this.form.category.id) {
+                if (!this.book.category.id) {
                      this.errors.push("Genero del libro es obligatorio.");
                 }
 
-                if (!this.form.año) {
+                if (!this.book.año) {
                     this.errors.push("El año de publicacion es obligatorio.");
-                } else if (this.form.año < 1000 || this.form.año > new Date().getFullYear()) {
+                } else if (this.book.año < 1000 || this.book.año > new Date().getFullYear()) {
                     this.errors.push("Coloca un año de publicacion valido.");
                 }
 
@@ -90,14 +85,9 @@
 
                 e.preventDefault();
             },
-            resetModal() {
-                this.form.name = null
-                this.form.autor = null
-                this.form.category = {
-                    id: null
-                }
-                this.form.año = null
-                this.errors = []
+            closeModal() {
+                this.$bvModal.hide("EditModal");
+                this.errors = [];
             },
             handleOk(bvModalEvent) {
                 bvModalEvent.preventDefault();
@@ -107,12 +97,11 @@
                 this.validarForm();
                 this.isLoading = true;
                 try {
-                    const response = await bookService.saveBook(this.form);
+                    const response = await bookService.updateBook(this.book);
                     if (!response.error) {
                         this.isLoading = false;
-                        this.resetModal();
-                        this.$emit('BookSaved');
-                        this.$bvModal.hide('Modal');
+                        this.$emit('BookEdited', response);
+                        this.closeModal();
                     }
                     console.log("Respuesta del servidor:", response);
                     window.location.reload();
