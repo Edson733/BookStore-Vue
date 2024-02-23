@@ -200,12 +200,22 @@
 
 <style>
     .card {
-    transition: transform 0.3s ease-in-out;
-    cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+        animation: fade-in 0.5s ease forwards;
+        opacity: 0;   
+    }
 
-  }
+    .card:hover {
+        transform: scale(1.05);
+    }
 
-  .card:hover {
-    transform: scale(1.05);
-  }
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 </style>
