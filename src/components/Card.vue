@@ -45,10 +45,10 @@
                 </b-form-group>
             </b-col>
         </b-row>
-        <div class="container-fluid text-center mt-3">
+        <div class="container-fluid d-flex justify-content-center mt-3">
             <ModalSpinner :isLoading="isLoading"/>
-            <b-row cols="4" v-if="!isLoading">
-                <b-col v-for="(book, idx) in books" :key="idx" class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+            <b-row v-if="!isLoading">
+                <b-col v-for="(book, idx) in books" :key="idx" class="col-xs-6 col-sm-6 col-md-2 col-lg-2 mb-4">
                     <b-card :title="book.name" img-src="https://www.enago.com/academy/wp-content/uploads/2021/12/BookChapter-750x340.jpg" img-alt="Image" img-top tag="article" style="max-width: 15rem" class="card rounded shadow mb-2">
                         <b-card-text>
                             <b>Autor:</b> {{ book.autor }}
