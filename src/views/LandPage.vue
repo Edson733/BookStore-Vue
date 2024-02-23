@@ -3,18 +3,18 @@
     <b-row class="mb-3 text-center">
       <b-col cols="10"><h1>Biblioteca</h1></b-col>
       <b-col cols="2">
-        <b-button class="m-1" variant="outline-dark" @click="openModal()"><b-icon icon="plus-circle-fill"></b-icon></b-button>
+        <b-button class="m-1" variant="outline-success" @click="openModal()"><b-icon icon="plus-circle-fill"></b-icon></b-button>
         <Modal/>
       </b-col>
     </b-row>
     <b-row >
-      <b-container fluid>
+      <b-container class="d-flex justify-content-center" fluid>
         <div class="drop-zone" @drop="onDrop($event, 1)" @dragover.prevent @dragenter.prevent>
           <div class="drag-el" draggable="true" @dragstart="handleDragStart" @dragend="handleDragEnd">
-            <b-row class="d-flex justify-content-center">
+            <b-row>
               <h3 class="mt-2">Añadir libro por drog</h3>
             </b-row>
-            <b-row class="d-flex justify-content-center">
+            <b-row>
               <b-form v-show="formVisible">
                 <p v-if="errors.length">
                   <b>{{ errors.length > 1 ? "Por favor corrige los siguientes errores: " : "Por favor corrige el siguiente error: " }}</b>

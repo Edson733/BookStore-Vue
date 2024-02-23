@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="EditModal" @hidden="closeModal" @ok="handleOk" @cancel="closeModal" hide-header-close title="Editar libro" cancel-title="Cancelar" cancel-variant="outline-danger" ok-title="Editar" ok-variant="outline-success">
+        <b-modal id="EditModal" @hidden="closeModal" @ok="handleOk" @cancel="closeModal" hide-header-close title="Editar libro" cancel-title="Cancelar" cancel-variant="outline-danger" ok-title="Editar" ok-variant="outline-success" hide-backdrop content-class="shadow">
             <b-form class="my-4" @submit.prevent="validarForm" @submit="handleSubmit">
                 <p v-if="errors.length">
                     <b>{{ errors.length > 1 ? "Por favor corrige los siguientes errores: " : "Por favor corrige el siguiente error: " }}</b>
